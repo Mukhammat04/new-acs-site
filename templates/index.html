@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ данных CSV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+
+        /* Шапка страницы */
+        header, footer {
+            background: linear-gradient(to right, #00aaff, #0066cc); /* Голубой и синий градиент */
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        /* Форма загрузки */
+        .upload-form {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .upload-form input[type="file"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .upload-form button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .upload-form button:hover {
+            background-color: #0055a0;
+        }
+
+        /* Результаты анализа */
+        .results {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .results h2 {
+            color: #0066cc;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .results h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: normal;
+        }
+
+        .results pre {
+            background-color: #ffffff;
+            padding: 5px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            white-space: pre-wrap; /* Разрыв длинных строк */
+            word-wrap: break-word;
+            max-width: 50%;
+            margin: 0 auto;
+            text-align:center;
+            display: flex;
+            flex-direction: column;
+            white-space: pre-wrap;
+        }
+
+        body {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        img {
+            width: 10vh;
+            height: 10vh;
+            border-radius: 50%;
+        }
+
+        .divider {
+            width: 200px;
+            height: 1px;
+            background-color: #000;
+            display: flex;
+            align-self: center;
+            margin-left: 45%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="../static/logo.png" alt="Логотип">
+        <h1>Анализ данных CSV</h1>
+        <nav>
+            <a href="/billing" style="
+                color: white; 
+                text-decoration: none; 
+                padding: 10px 20px; 
+                background-color: #0055a0; 
+                border-radius: 5px;
+                margin-top: 10px; 
+                display: inline-block;">
+                Перейти в Billing
+            </a>
+        </nav>
+    </header>
+
+    <div class="upload-form">
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">Загрузить</button>
+        </form>
+    </div>
+
+    {% if first_branch_summary %}
+    <div class="results">
+        <h2>Результаты анализа:</h2>
+
+        <h3>Первая ветка</h3>
+        <p>Received by SMS provider: {{ first_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ first_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ first_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ first_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Вторая ветка</h3>
+        <p>Received by SMS provider: {{ second_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ second_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ second_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ second_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Третья ветка</h3>
+        <p>Received by SMS provider: {{ third_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ third_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ third_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ third_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Сброс</h3>
+        <p>Received by SMS provider: {{ drop_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ drop_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ drop_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ drop_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Недозвон</h3>
+        <p>Received by SMS provider: {{ nocall_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ nocall_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ nocall_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ nocall_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Дожим</h3>
+        <p>Received by SMS provider: {{ press_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ press_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ press_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ press_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Заинтересованные</h3>
+        <p>Received by SMS provider: {{ sog_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ sog_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ sog_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ sog_branch_summary['Unique visits ?'] }}</p>
+
+        <div class="divider"></div>
+
+        <h3>Автоответчик</h3>
+        <p>Received by SMS provider: {{ auto_branch_summary['Received by SMS provider'] }}</p>
+        <p>Delivered: {{ auto_branch_summary['Delivered'] }}</p>
+        <p>Unique transitions: {{ auto_branch_summary['Unique transitions'] }}</p>
+        <p>Unique visits: {{ auto_branch_summary['Unique ыыvisits ?'] }}</p>
+    </div>
+
+    <footer>
+        По всем вопросам обращаться @Luca_ACS
+    </footer>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ данных CSV</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+
+        .page {
+            display: flex;
+            justify-content: center; /* Горизонтальное центрирование */
+            align-items: flex-start;
+            margin-top: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        /* Шапка страницы */
+        header {
+            background: linear-gradient(to right, #00aaff, #0066cc); /* Голубой и синий градиент */
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .logo {
+            width: 10vh;
+            height: 10vh;
+            border-radius: 50%;
+        }
+
+        .back-button {
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(to right, #00aaff, #0066cc);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.7s ease;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(to right, #0066cc, #00aaff);
+        }
+
+        .upload-form, .results {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 45%;
+        }
+
+        .upload-form input[type="file"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .upload-form button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .upload-form button:hover {
+            background-color: #0055a0;
+        }
+
+        .box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .results div {
+            margin-bottom: 15px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        /* Стиль для блока с результатами */
+        .results h2 {
+            font-size: 2em;
+            color: #0066cc;
+        }
+
+        .results h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .results span {
+            font-size: 16px;
+            margin-right: 20px;
+        }
+
+        /* Для больших экранов (чтобы выровнять два бокса по горизонтали) */
+        @media (min-width: 768px) {
+            .page {
+                justify-content: space-between;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="../static/logo.png" alt="Логотип" class="logo">
+        <h1>Billing</h1>
+        <a href="/" class="back-button">Вернуться в Short links</a>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-left: 20px;">Добро пожаловать в раздел Billing!</h2>
+    </div>
+
+    <div class="page">
+        <!-- Форма загрузки файлов -->
+        <div class="upload-form box">
+            <h3>Загрузите файлы:</h3>
+            <form method="POST" enctype="multipart/form-data">
+                <label>Файл Телефонии:</label>
+                <input type="file" name="telephony_file" accept=".csv"><br><br>
+                <label>Файл SMS:</label>
+                <input type="file" name="sms_file" accept=".csv"><br><br>
+                <label>Файл Робота:</label>
+                <input type="file" name="robot_file" accept=".csv"><br><br>
+                <button type="submit">Анализировать</button>
+            </form>
+        </div>
+
+        <!-- Результаты анализа -->
+        <div class="results box">
+            {% if telephony_result %}
+                <h2>Результаты Телефонии:</h2>
+                {% for result in telephony_result %}
+                    <div class="result-item">
+                        <h3>{{ result.campaign }}</h3>
+                        <p>Providers: {{ result.provider }}</p>
+                        <p>Total Number of Steps: {{ result.total_steps }}</p>
+                    </div>
+                    <div class="divider"></div>
+                {% endfor %}
+            {% endif %}
+
+            {% if sms_result %}
+                <h2>Результаты SMS:</h2>
+                {% for campaign, data in sms_result.items() %}
+                    <div class="result-item">
+                        <h3>{{ campaign }}</h3>
+                        <div>
+                            <span>Paid SMS: <strong>{{ data['Count of paid SMS'] }}</strong></span>
+                            <span>Commission SMS: <strong>{{ data['Number of SMS with commission'] }}</strong></span>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                {% endfor %}
+            {% endif %}
+
+            {% if robot_result %}
+                <h2>Результаты Робота:</h2>
+                {% for campaign, data in robot_result.items() %}
+                    {% if 'lexicalbrazilbot' not in campaign and 'lnsbrazilinter' not in campaign %}
+                        <div class="result-item">
+                            <h3>{{ campaign }}</h3>
+                            <p>Service Steps: {{ data['Number of service steps'] }}</p>
+                        </div>
+                        <div class="divider"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+        <h2>Введите csv файл</h2>
+        {% endif %}
+    </div>
+
+</body>
+</html>
